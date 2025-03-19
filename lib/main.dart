@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/add_recipe_screen.dart'; 
-import 'screens/recipe_details_screen.dart'; 
-import 'screens/recipe_list_screen.dart'; 
+import 'screens/add_recipe_screen.dart';
+import 'screens/Welcome_Page.dart';
+import 'screens/recipe_list_screen.dart';
 import 'services/firebase.dart';
 
 void main() async {
@@ -19,10 +19,50 @@ class RecipeApp extends StatelessWidget {
     return MaterialApp(
       title: 'Recipe App',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFCCDEDF),
+        primaryColor: const Color(0xFF2F696B),
       ),
-      home: const AddRecipeScreen(),
+      home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2F696B),
+        title: const Text('My Recipe Book', style: TextStyle(color: Colors.white)),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onSelected: (String result) {
+              if (result == 'Add Recipe') {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const AddRecipeScreen()));
+              }
+             /*  if (result == 'View Recipes') {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const RecipeListScreen()));
+              } */
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'Add Recipe',
+                child: Text('Add Recipe'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'View Recipes',
+                child: Text('View Recipes'),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: const WelcomePage(),
     );
   }
 }
