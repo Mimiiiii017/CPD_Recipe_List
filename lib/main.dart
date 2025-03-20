@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/add_recipe_screen.dart';
 import 'screens/Welcome_Page.dart';
-import 'screens/recipe_list_screen.dart';
 import 'services/firebase.dart';
 
 void main() async {
@@ -20,6 +19,8 @@ class RecipeApp extends StatelessWidget {
       title: 'Recipe App',
       theme: ThemeData(
         primaryColor: const Color(0xFF2F696B),
+        hintColor: const Color(0xFFD9E7E8),
+        fontFamily: 'Poppins',
       ),
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,

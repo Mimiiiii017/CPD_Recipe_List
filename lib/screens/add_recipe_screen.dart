@@ -6,7 +6,6 @@ import '../services/firebase.dart';
 class AddRecipeScreen extends StatefulWidget {
   const AddRecipeScreen({super.key});
 
-  @override
   State<AddRecipeScreen> createState() => _AddRecipeScreenState();
 }
 
@@ -60,6 +59,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFD9E7E8), 
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
