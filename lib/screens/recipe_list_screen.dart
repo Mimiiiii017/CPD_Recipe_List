@@ -11,11 +11,6 @@ class RecipeListScreen extends StatefulWidget {
 class _RecipeListScreenState extends State<RecipeListScreen> {
   List<Map<String, dynamic>> recipes = [];
 
-  void loadRecipes() async {
-    recipes = await FirebaseService.getRecipes();
-    setState(() {});
-  }
-
   @override
   void initState() {
     super.initState();

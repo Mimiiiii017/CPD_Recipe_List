@@ -25,7 +25,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final descriptionController = TextEditingController();
 
   File? selectedImage;
-  String? uploadedImageUrl; 
+  String? uploadedImageUrl;
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -62,103 +62,61 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     );
   }
 
-  void takePhoto() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.camera);
-
-    if (pickedImage != null) {
-      File imageFile = File(pickedImage.path);
-
-      
-      String fileName = 'recipes/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
-
+  void submitRecipe() async {
+    if (_formKey.currentState!.validate()) {
       try {
-        await storageRef.putFile(imageFile);
-        String imageUrl = await storageRef.getDownloadURL();
+        String? imageUrl;
 
-        setState(() {
-          selectedImage = imageFile;
-          uploadedImageUrl = imageUrl; 
-        });
+        if (selectedImage != null) {
+          String fileName = 'recipes/${DateTime.now().millisecondsSinceEpoch}.jpg';
+          Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
 
-        print("Image uploaded: $imageUrl");
+          // Delete previous image if exists
+          if (uploadedImageUrl != null && uploadedImageUrl!.isNotEmpty) {
+            await FirebaseStorage.instance.refFromURL(uploadedImageUrl!).delete();
+          }
+
+          await storageRef.putFile(selectedImage!);
+          imageUrl = await storageRef.getDownloadURL();
+        }
+
+        await FirebaseService.addRecipe(
+          recipeName: recipeNameController.text,
+          category: categoryController.text,
+          ingredients: ingredientsController.text.split(","),
+          instructions: instructionsController.text.split(","),
+          prepTime: prepTimeController.text,
+          cookTime: cookTimeController.text,
+          description: descriptionController.text,
+          imageUrl: imageUrl,
+        );
+
+        showNotification(recipeNameController.text);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Recipe added successfully!")));
+
+        _formKey.currentState!.reset();
       } catch (e) {
-        print("Firebase Error: $e");
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
-
-void submitRecipe() async {
-  if (_formKey.currentState!.validate()) {
-    try {
-      String? imageUrl; 
-
-      if (selectedImage != null) {
-    
-        String fileName = 'recipes/${DateTime.now().millisecondsSinceEpoch}.jpg';
-        Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
-        await storageRef.putFile(selectedImage!);
-        imageUrl = await storageRef.getDownloadURL();
-      }
-
-      
-      await FirebaseService.addRecipe(
-        recipeName: recipeNameController.text,
-        category: categoryController.text,
-        ingredients: ingredientsController.text.split(","),
-        instructions: instructionsController.text.split(","),
-        prepTime: prepTimeController.text,
-        cookTime: cookTimeController.text,
-        description: descriptionController.text,
-        imageUrl: imageUrl, 
-      );
-
-      showNotification(recipeNameController.text);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Recipe added successfully!")));
-
-      _formKey.currentState!.reset();
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error: $e")));
-    }
-  }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFD9E7E8),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF2F696B),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: const Text('Add Recipe Form',
-                style: TextStyle(color: Colors.white)),
-          ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2F696B),
+        title: const Text('Add Recipe Form', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SafeArea(
+            body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           child: Container(
@@ -188,7 +146,7 @@ void submitRecipe() async {
                         fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 20),
-                  TextFormField(
+                TextFormField(
                     controller: recipeNameController,
                     decoration: const InputDecoration(
                         labelText: "Recipe Name",
@@ -293,39 +251,38 @@ void submitRecipe() async {
                     validator: (val) => val!.isEmpty ? "Enter Description" : null,
                   ),
 
-                  const SizedBox(height: 15),
-
-                 
-                  OutlinedButton.icon(
-                    onPressed: takePhoto,
-                    icon: const Icon(Icons.camera_alt, color: Color(0xFF2F696B)),
-                    label: const Text("Take Photo", style: TextStyle(color: Color(0xFF2F696B))),
-                    style: OutlinedButton.styleFrom(
-                      fixedSize: const Size.fromHeight(100),
-                      side: const BorderSide(color: Color(0xFF2F696B), style: BorderStyle.solid),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                const SizedBox(height: 15),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final picker = ImagePicker();
+                    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+                    if (pickedImage != null) {
+                      setState(() => selectedImage = File(pickedImage.path));
+                    }
+                  },
+                  icon: const Icon(Icons.camera_alt, color: Color(0xFF2F696B)),
+                  label: const Text("Take Photo", style: TextStyle(color: Color(0xFF2F696B))),
+                  style: OutlinedButton.styleFrom(
+                    fixedSize: const Size.fromHeight(100),
+                    side: const BorderSide(color: Color(0xFF2F696B)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-
-                  const SizedBox(height: 20),
-
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2F696B),
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                    ),
-                    onPressed: submitRecipe,
-                    child: const Text("COMPLETE RECIPE",
-                        style: TextStyle(color: Colors.white)),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2F696B),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
-                ],
-              ),
+                  onPressed: submitRecipe,
+                  child: const Text("COMPLETE RECIPE", style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ),
           ),
         ),
       ),
+    ),
     );
   }
 }
