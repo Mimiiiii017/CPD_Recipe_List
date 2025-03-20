@@ -21,6 +21,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final cookTimeController = TextEditingController();
   final servingsController = TextEditingController();
   final categoryController = TextEditingController();
+  final descriptionController = TextEditingController();
 
   File? selectedImage;
 
@@ -143,7 +144,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 ),
               ],
             ),
-            
             child: Form(
               key: _formKey,
               child: Column(
@@ -157,9 +157,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                         fontSize: 24,
                         fontWeight: FontWeight.w900),
                   ),
-
                   const SizedBox(height: 20),
-                  
                   TextFormField(
                     controller: recipeNameController,
                     decoration: const InputDecoration(
@@ -176,27 +174,46 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   TextFormField(
                     controller: ingredientsController,
                     decoration: const InputDecoration(
-                        labelText: "Ingredients",
-                        labelStyle:
-                            TextStyle(fontSize: 14, color: Color(0xFF626262)),
+                        labelText: "Ingredients", 
+                        labelStyle: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF626262)), 
                         border: OutlineInputBorder()),
-                    validator: (val) =>
-                        val!.isEmpty ? "Enter ingredients" : null,
+                    validator: (val) => val!.isEmpty ? "Enter ingredients" : null,
                   ),
+
+                      const SizedBox(height: 5),
+
+                  Text("Comma to separate each ingredient",
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                          color: Color(0xFF2F696B),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500)),
 
                   const SizedBox(height: 15),
 
                   TextFormField(
                     controller: instructionsController,
                     decoration: const InputDecoration(
-                        labelText: "Instructions",
-                        labelStyle:
-                            TextStyle(fontSize: 14, color: Color(0xFF626262)),
+                        labelText: "Instructions", 
+                        labelStyle: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF626262)), 
                         border: OutlineInputBorder()),
-                    validator: (val) =>
-                        val!.isEmpty ? "Enter instructions" : null,
+                    validator: (val) => val!.isEmpty ? "Enter instructions" : null,
                   ),
 
+                  const SizedBox(height: 5),
+
+                  Text("Comma to separate each instruction",
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                          color: Color(0xFF2F696B),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500)),
+
+              
                   const SizedBox(height: 15),
 
                   TextFormField(
@@ -223,14 +240,31 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
                   const SizedBox(height: 15),
 
-                  OutlinedButton.icon(
-                    onPressed: takePhoto,
-                    icon:
-                        const Icon(Icons.camera_alt, color: Color(0xFF2F696B)),
-                    label: const Text("Take Photo",
-                        style: TextStyle(color: Color(0xFF2F696B))),
+                  TextFormField(
+                    controller: descriptionController,
+                    decoration: const InputDecoration(
+                        labelText: "Description",
+                        labelStyle:
+                            TextStyle(fontSize: 14, color: Color(0xFF626262)),
+                        border: OutlineInputBorder()),
+                    validator: (val) => val!.isEmpty ? "Enter Description" : null,
                   ),
 
+                  const SizedBox(height: 15),
+
+                 OutlinedButton.icon(
+                    onPressed: takePhoto,
+                    icon: const Icon(Icons.camera_alt, color: Color(0xFF2F696B)),
+                    label: const Text("Take Photo", style: TextStyle(color: Color(0xFF2F696B))),
+                    style: OutlinedButton.styleFrom(
+                      fixedSize: const Size.fromHeight(100),
+                      side: BorderSide(color: const Color(0xFF2F696B), style: BorderStyle.solid),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  
                   const SizedBox(height: 20),
 
                   ElevatedButton(

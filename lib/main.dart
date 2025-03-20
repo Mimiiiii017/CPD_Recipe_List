@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_book/screens/recipe_list_screen.dart';
 import 'screens/add_recipe_screen.dart';
 import 'screens/Welcome_Page.dart';
 import 'services/firebase.dart';
@@ -20,7 +21,6 @@ class RecipeApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: const Color(0xFF2F696B),
         hintColor: const Color(0xFFD9E7E8),
-        fontFamily: 'Poppins',
       ),
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
@@ -45,10 +45,10 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const AddRecipeScreen()));
               }
-             /*  if (result == 'View Recipes') {
+               if (result == 'View Recipes') {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const RecipeListScreen()));
-              } */
+              } 
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
