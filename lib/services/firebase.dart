@@ -22,40 +22,35 @@ class FirebaseService {
     );
   }
 
-  //adding a recipe
-  static Future<void> addRecipe({
-    required String recipeName,
-    required List<String> ingredients,
-    required String prepTime,
-    required String cookTime,
-    required String category,
-    required String description,
-    File? imageFile,
-  }) async {
-    try {
-      //Uploading image (optional)
-      String imageUrl = "";
-      if (imageFile != null) {
-        imageUrl = await uploadImage(imageFile);
-      }
-
-      //addint the data
-      await _databaseRef.push().set({
-        'name': recipeName,
-        'ingredients': ingredients, 
-        'prepTime': prepTime,
-        'cookTime': cookTime,
-        'category': category,
-        'description': description,
-        'imageUrl': imageUrl, 
-      });
-    } catch (error) {
-      print("Firebase Error: $error");
-      throw Exception("Failed to save recipe.");
-    }
+ 
+ static Future<void> addRecipe({
+  required String recipeName,
+  required List<String> ingredients,
+  required List<String> instructions,
+  required String prepTime,
+  required String cookTime,
+  required String category,
+  required String description,
+  String? imageUrl, 
+}) async {
+  try {
+    await _databaseRef.push().set({
+      'name': recipeName,
+      'ingredients': ingredients,
+      'instructions': instructions,
+      'prepTime': prepTime,
+      'cookTime': cookTime,
+      'category': category,
+      'description': description,
+      'imageUrl': imageUrl ?? "", 
+    });
+  } catch (error) {
+    print("Firebase Error: $error");
+    throw Exception("Failed to save recipe.");
   }
+}
 
-//getting data from firebase
+
   static Future<List<Map<String, dynamic>>> getRecipes() async {
     try {
       final snapshot = await _databaseRef.get();
@@ -71,7 +66,7 @@ class FirebaseService {
     }
   }
 
-//uploading image method
+
     static Future<String> uploadImage(File imageFile) async {
     try {
       final ref = _storage.ref().child('recipe_images/${DateTime.now().millisecondsSinceEpoch}.jpg');

@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
               }
                if (result == 'View Recipes') {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const RecipeListScreen()));
+                    MaterialPageRoute(builder: (context) => RecipeListScreen()));
               } 
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[

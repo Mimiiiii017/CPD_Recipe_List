@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -15,15 +16,16 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final recipeNameController = TextEditingController();
+  final categoryController = TextEditingController();
   final ingredientsController = TextEditingController();
   final instructionsController = TextEditingController();
   final prepTimeController = TextEditingController();
   final cookTimeController = TextEditingController();
   final servingsController = TextEditingController();
-  final categoryController = TextEditingController();
   final descriptionController = TextEditingController();
 
   File? selectedImage;
+  String? uploadedImageUrl; 
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -65,37 +67,65 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     final pickedImage = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedImage != null) {
-      setState(() {
-        selectedImage = File(pickedImage.path);
-      });
-    }
-  }
+      File imageFile = File(pickedImage.path);
 
-  void submitRecipe() async {
-    if (_formKey.currentState!.validate()) {
+      
+      String fileName = 'recipes/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+
       try {
-        await FirebaseService.addRecipe(
-          recipeName: recipeNameController.text,
-          ingredients: ingredientsController.text.split(","),
-          prepTime: prepTimeController.text,
-          cookTime: cookTimeController.text,
-          category: categoryController.text,
-          description: instructionsController.text,
-          imageFile: selectedImage,
-        );
+        await storageRef.putFile(imageFile);
+        String imageUrl = await storageRef.getDownloadURL();
 
-        showNotification(recipeNameController.text);
+        setState(() {
+          selectedImage = imageFile;
+          uploadedImageUrl = imageUrl; 
+        });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Recipe added successfully!")));
-
-        _formKey.currentState!.reset();
+        print("Image uploaded: $imageUrl");
       } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Error: $e")));
+        print("Firebase Error: $e");
       }
     }
   }
+
+void submitRecipe() async {
+  if (_formKey.currentState!.validate()) {
+    try {
+      String? imageUrl; 
+
+      if (selectedImage != null) {
+    
+        String fileName = 'recipes/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+        await storageRef.putFile(selectedImage!);
+        imageUrl = await storageRef.getDownloadURL();
+      }
+
+      
+      await FirebaseService.addRecipe(
+        recipeName: recipeNameController.text,
+        category: categoryController.text,
+        ingredients: ingredientsController.text.split(","),
+        instructions: instructionsController.text.split(","),
+        prepTime: prepTimeController.text,
+        cookTime: cookTimeController.text,
+        description: descriptionController.text,
+        imageUrl: imageUrl, 
+      );
+
+      showNotification(recipeNameController.text);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Recipe added successfully!")));
+
+      _formKey.currentState!.reset();
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -149,10 +179,10 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  const Text(
                     "ADD RECIPE",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Color(0xFF2F696B),
                         fontSize: 24,
                         fontWeight: FontWeight.w900),
@@ -167,6 +197,19 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                         border: OutlineInputBorder()),
                     validator: (val) =>
                         val!.isEmpty ? "Enter a recipe name" : null,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  TextFormField(
+                    controller: categoryController,
+                    decoration: const InputDecoration(
+                        labelText: "Category",
+                        labelStyle:
+                            TextStyle(fontSize: 14, color: Color(0xFF626262)),
+                        border: OutlineInputBorder()),
+                    validator: (val) =>
+                        val!.isEmpty ? "Enter category" : null,
                   ),
 
                   const SizedBox(height: 15),
@@ -252,19 +295,20 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
                   const SizedBox(height: 15),
 
-                 OutlinedButton.icon(
+                 
+                  OutlinedButton.icon(
                     onPressed: takePhoto,
                     icon: const Icon(Icons.camera_alt, color: Color(0xFF2F696B)),
                     label: const Text("Take Photo", style: TextStyle(color: Color(0xFF2F696B))),
                     style: OutlinedButton.styleFrom(
                       fixedSize: const Size.fromHeight(100),
-                      side: BorderSide(color: const Color(0xFF2F696B), style: BorderStyle.solid),
+                      side: const BorderSide(color: Color(0xFF2F696B), style: BorderStyle.solid),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
 
                   ElevatedButton(
