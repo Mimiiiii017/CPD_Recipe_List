@@ -47,63 +47,78 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                 final recipe = recipes[index];
                 final imageUrl = recipe['imageUrl'];
 
-
                 print('Image URL: $imageUrl');
 
-return Card(
-  child: Container(
-    height: 140, 
-    padding: const EdgeInsets.all(10), 
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ListTile(
-          leading: (imageUrl != null && imageUrl.isNotEmpty)
-              ? Image.network(
-                  imageUrl,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    print("Image Load Error: $error"); 
-                    return const Icon(Icons.broken_image, size: 50);
-                  },
-                )
-              : const Icon(Icons.image, size: 50),
-          title: Text(
-            recipe['name'] ?? 'No Name',
-            style: const TextStyle(
-              color: Color(0xFF2F696B),
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(recipe['category'] ?? 'No Category'),
-              Text(recipe['description'] ?? 'No Description'),
-            ],
-          ),
-        ),
-        SizedBox(
-          width: double.infinity, 
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2F696B),
-              padding: const EdgeInsets.symmetric(vertical: 15),
-            ),
-            child: const Text("VIEW RECIPE", style: TextStyle(color: Colors.white)),
-            onPressed: () {
-              
-            },
-          ),
-        ),
-      ],
-    ),
-  ),
-);
+                return Card(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Container(
+                        padding: const EdgeInsets.all(10),
+                        width: constraints.maxWidth * 0.9, 
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ListTile(
+                              leading: (imageUrl != null && imageUrl.isNotEmpty)
+                                  ? Image.network(
+                                      imageUrl,
+                                      width: 50,
+                                      height:50,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        print("Image Load Error: $error");
+                                        return const Icon(Icons.broken_image, size: 50);
+                                      },
+                                    )
+                                  : const Icon(Icons.image, size: 50),
+                              title: Text(
+                                recipe['name'] ?? 'No Name',
+                                style: const TextStyle(
+                                  color: Color(0xFF2F696B),
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(recipe['category'] ?? 'No Category'),
+                                  Text(recipe['description'] ?? 'No Description'),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2F696B),
+                                  padding: const EdgeInsets.symmetric(vertical: 10),  
+                                ),
+                                child: const Text("VIEW RECIPE", style: TextStyle(color: Colors.white)),
+                                onPressed: () {
+                
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 5), 
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
               },
             ),
     );
   }
-} 
+}
