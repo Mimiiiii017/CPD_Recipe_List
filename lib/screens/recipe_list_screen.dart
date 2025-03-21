@@ -28,51 +28,85 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFD9E7E8),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF2F696B),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: const Text('Recipe List', style: TextStyle(color: Colors.white)),
-          ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2F696B),
+        title: const Text('Recipe List', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
- 
+      body: recipes.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              itemCount: recipes.length,
+              itemBuilder: (context, index) {
+                final recipe = recipes[index];
+                final imageUrl = recipe['imageUrl'];
 
-      body: ListView.builder(
-         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        itemCount: recipes.length,
-        itemBuilder: (context, index) {
-          final recipe = recipes[index];
-          return Card(
-            child: ListTile(
-              title: Text(recipe['name'] ?? 'No Name'),
-              subtitle: Text(recipe['category'] ?? 'No Category'),
-              onTap: () {
-                // Handle tap
+                // Debugging: Check if URL exists
+                print('Image URL: $imageUrl');
+
+return Card(
+  child: Container(
+    height: 140, // Adjusted height to accommodate the button
+    padding: const EdgeInsets.all(10), // Add padding to the container
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ListTile(
+          leading: (imageUrl != null && imageUrl.isNotEmpty)
+              ? Image.network(
+                  imageUrl,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    print("Image Load Error: $error"); // Debugging print
+                    return const Icon(Icons.broken_image, size: 50);
+                  },
+                )
+              : const Icon(Icons.image, size: 50),
+          title: Text(
+            recipe['name'] ?? 'No Name',
+            style: const TextStyle(
+              color: Color(0xFF2F696B),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(recipe['category'] ?? 'No Category'),
+              Text(recipe['description'] ?? 'No Description'),
+            ],
+          ),
+          onTap: () {
+            // Handle tap
+          },
+        ),
+        SizedBox(
+          width: double.infinity, // Set the desired width
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2F696B),
+              padding: const EdgeInsets.symmetric(vertical: 15),
+            ),
+            child: const Text("VIEW RECIPE", style: TextStyle(color: Colors.white)),
+            onPressed: () {
+              // Handle button press
+            },
+          ),
+        ),
+      ],
+    ),
+  ),
+);
               },
             ),
-          );
-        },
-      ),
     );
   }
-}
-
+} 

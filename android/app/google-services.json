@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "717175209965",
+    "firebase_url": "https://cross-platform-dev-6-2a-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "cross-platform-dev-6-2a",
+    "storage_bucket": "cross-platform-dev-6-2a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717175209965:android:b71ee8ff526d39aa4cb1e4",
+        "android_client_info": {
+          "package_name": "com.example.recipe_book_Android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlCja18dG2ro7QFERkjErwd4ebdTdpaOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
