@@ -1,4 +1,5 @@
   import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
   import 'package:recipe_book/screens/recipe_list_screen.dart';
   import 'screens/add_recipe_screen.dart';
   import 'screens/Welcome_Page.dart';
@@ -11,6 +12,10 @@
   void main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await FirebaseService.initializeFirebase();
+
+debugProfileBuildsEnabled = true;
+debugPaintLayerBordersEnabled = true;
+
 
     runApp(const RecipeApp());
   }
