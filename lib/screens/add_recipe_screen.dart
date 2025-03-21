@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -21,11 +20,9 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final instructionsController = TextEditingController();
   final prepTimeController = TextEditingController();
   final cookTimeController = TextEditingController();
-  final servingsController = TextEditingController();
   final descriptionController = TextEditingController();
 
   File? selectedImage;
-  String? uploadedImageUrl;
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -43,8 +40,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   }
 
   Future<void> showNotification(String recipeName) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'recipe_channel',
       'Recipe Notifications',
       importance: Importance.max,
@@ -68,23 +64,14 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         String? imageUrl;
 
         if (selectedImage != null) {
-          String fileName = 'recipes/${DateTime.now().millisecondsSinceEpoch}.jpg';
-          Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
-
-          // Delete previous image if exists
-          if (uploadedImageUrl != null && uploadedImageUrl!.isNotEmpty) {
-            await FirebaseStorage.instance.refFromURL(uploadedImageUrl!).delete();
-          }
-
-          await storageRef.putFile(selectedImage!);
-          imageUrl = await storageRef.getDownloadURL();
+          imageUrl = await FirebaseService.uploadImage(selectedImage!);
         }
 
         await FirebaseService.addRecipe(
           recipeName: recipeNameController.text,
           category: categoryController.text,
-          ingredients: ingredientsController.text.split(","),
-          instructions: instructionsController.text.split(","),
+          ingredients: ingredientsController.text.split(','),
+          instructions: instructionsController.text.split(','),
           prepTime: prepTimeController.text,
           cookTime: cookTimeController.text,
           description: descriptionController.text,
@@ -94,12 +81,15 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         showNotification(recipeNameController.text);
 
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Recipe added successfully!")));
+          const SnackBar(content: Text("Recipe added successfully!")),
+        );
 
         _formKey.currentState!.reset();
+        setState(() => selectedImage = null);
       } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Error: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: $e")),
+        );
       }
     }
   }

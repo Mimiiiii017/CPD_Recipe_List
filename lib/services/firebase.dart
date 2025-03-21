@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../firebase_options.dart';
 
 class FirebaseService {
   static final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref("recipes");
@@ -9,16 +10,7 @@ class FirebaseService {
 
   static Future<void> initializeFirebase() async {
     await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: "AIzaSyACs20L0aPLyDNkiye8Mfk3_GM3Juh0mdg",
-        authDomain: "cross-platform-dev-6-2a.firebaseapp.com",
-        databaseURL: "https://cross-platform-dev-6-2a-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "cross-platform-dev-6-2a",
-        storageBucket: "cross-platform-dev-6-2a.firebasestorage.app",
-        messagingSenderId: "717175209965",
-        appId: "1:717175209965:web:6c2fcfc6f11cb6024cb1e4",
-        measurementId: "G-F7L5MET096",
-      ),
+      options: DefaultFirebaseOptions.currentPlatform,
     );
   }
 
@@ -30,7 +22,7 @@ class FirebaseService {
     required String cookTime,
     required String category,
     required String description,
-    String? imageUrl, 
+    String? imageUrl,
   }) async {
     try {
       await _databaseRef.push().set({
@@ -41,11 +33,10 @@ class FirebaseService {
         'cookTime': cookTime,
         'category': category,
         'description': description,
-        'imageUrl': imageUrl ?? "", 
+        'imageUrl': imageUrl ?? "",
       });
     } catch (error) {
-      print("Firebase Error: $error");
-      throw Exception("Failed to save recipe.");
+      throw Exception("Failed to save recipe: $error");
     }
   }
 
@@ -60,8 +51,7 @@ class FirebaseService {
         return recipeData;
       }).toList();
     } catch (error) {
-      print("Error fetching recipes: $error");
-      throw Exception("Failed to fetch recipes.");
+      throw Exception("Failed to fetch recipes: $error");
     }
   }
 
@@ -71,8 +61,7 @@ class FirebaseService {
       await ref.putFile(imageFile);
       return await ref.getDownloadURL();
     } catch (error) {
-      print("🔥 Image Upload Error: $error");
-      throw Exception("Failed to upload image.");
+      throw Exception("Failed to upload image: $error");
     }
   }
 }

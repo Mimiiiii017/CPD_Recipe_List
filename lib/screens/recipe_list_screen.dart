@@ -84,9 +84,6 @@ return Card(
               Text(recipe['description'] ?? 'No Description'),
             ],
           ),
-          onTap: () {
-            // Handle tap
-          },
         ),
         SizedBox(
           width: double.infinity, // Set the desired width

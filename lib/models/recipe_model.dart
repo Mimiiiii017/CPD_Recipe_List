@@ -2,12 +2,12 @@ class Recipe {
   final String id;
   final String name;
   final List<String> ingredients;
-  final String instructions;
+  final List<String> instructions;
   final String prepTime;
   final String cookTime;
-  final String servings;
   final String category;
-  final String imageUrl; 
+  final String description;
+  final String imageUrl;
 
   Recipe({
     required this.id,
@@ -16,8 +16,8 @@ class Recipe {
     required this.instructions,
     required this.prepTime,
     required this.cookTime,
-    required this.servings,
     required this.category,
+    required this.description,
     required this.imageUrl,
   });
 
@@ -26,12 +26,12 @@ class Recipe {
       id: documentId,
       name: data['name'] ?? '',
       ingredients: List<String>.from(data['ingredients'] ?? []),
-      instructions: data['instructions'] ?? '',
+      instructions: List<String>.from(data['instructions'] ?? []),
       prepTime: data['prepTime'] ?? '',
       cookTime: data['cookTime'] ?? '',
-      servings: data['servings'] ?? '',
       category: data['category'] ?? '',
-      imageUrl: data['imageUrl'] ?? '', 
+      description: data['description'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
     );
   }
 
@@ -42,9 +42,9 @@ class Recipe {
       'instructions': instructions,
       'prepTime': prepTime,
       'cookTime': cookTime,
-      'servings': servings,
       'category': category,
-      'imageUrl': imageUrl, 
+      'description': description,
+      'imageUrl': imageUrl,
     };
   }
 }
