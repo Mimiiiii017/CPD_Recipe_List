@@ -47,13 +47,13 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                 final recipe = recipes[index];
                 final imageUrl = recipe['imageUrl'];
 
-                // Debugging: Check if URL exists
+
                 print('Image URL: $imageUrl');
 
 return Card(
   child: Container(
-    height: 140, // Adjusted height to accommodate the button
-    padding: const EdgeInsets.all(10), // Add padding to the container
+    height: 140, 
+    padding: const EdgeInsets.all(10), 
     child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -65,7 +65,7 @@ return Card(
                   height: 50,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    print("Image Load Error: $error"); // Debugging print
+                    print("Image Load Error: $error"); 
                     return const Icon(Icons.broken_image, size: 50);
                   },
                 )
@@ -86,7 +86,7 @@ return Card(
           ),
         ),
         SizedBox(
-          width: double.infinity, // Set the desired width
+          width: double.infinity, 
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2F696B),
@@ -94,7 +94,7 @@ return Card(
             ),
             child: const Text("VIEW RECIPE", style: TextStyle(color: Colors.white)),
             onPressed: () {
-              // Handle button press
+              
             },
           ),
         ),
