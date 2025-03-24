@@ -12,11 +12,6 @@ import 'package:flutter/rendering.dart';
   void main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await FirebaseService.initializeFirebase();
-
-debugProfileBuildsEnabled = true;
-debugPaintLayerBordersEnabled = true;
-
-
     runApp(const RecipeApp());
   }
 
