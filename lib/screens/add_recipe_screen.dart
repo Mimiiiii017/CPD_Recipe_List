@@ -117,35 +117,36 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         ),
       ),
             body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    "ADD RECIPE",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Color(0xFF2F696B),
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900),
-                  ),
-                  const SizedBox(height: 20),
+        child: Center(
+  child: Container(
+    width: MediaQuery.of(context).size.width * 0.9, // Adjust width as needed
+    margin: const EdgeInsets.all(10),
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 10,
+          offset: const Offset(0, 5),
+        ),
+      ],
+    ),
+    child: Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            "ADD RECIPE",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Color(0xFF2F696B),
+                fontSize: 24,
+                fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 20),
                 TextFormField(
                     controller: recipeNameController,
                     decoration: const InputDecoration(
